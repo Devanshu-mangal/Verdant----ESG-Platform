@@ -63,7 +63,11 @@ class UploadBatchViewSet(viewsets.ReadOnlyModelViewSet):
             summary={'raw_content': raw_content},
         )
 
-        process_upload_batch.delay(str(batch.id))
+        import os
+	if os.environ.get('RENDER'):
+    		process_upload_batch(str(batch.id))
+	else:
+    		process_upload_batch.delay(str(batch.id))
 
         return Response(
             UploadBatchSerializer(batch).data,

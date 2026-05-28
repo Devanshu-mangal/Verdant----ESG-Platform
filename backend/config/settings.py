@@ -139,6 +139,7 @@ REST_FRAMEWORK = {
     'PAGE_SIZE': 50,
 }
 # Production override
+# Production override
 import os as _os
 if _os.environ.get('RENDER'):
     DEBUG = False
@@ -146,13 +147,18 @@ if _os.environ.get('RENDER'):
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql',
-            'NAME': _os.environ.get('PGDATABASE'),
-            'USER': _os.environ.get('PGUSER'),
+            'NAME': _os.environ.get('PGDATABASE', 'postgres'),
+            'USER': _os.environ.get('PGUSER', 'postgres'),
             'PASSWORD': _os.environ.get('PGPASSWORD'),
             'HOST': _os.environ.get('PGHOST'),
             'PORT': _os.environ.get('PGPORT', '5432'),
+            'OPTIONS': {
+                'sslmode': 'require',
+            },
         }
     }
     CELERY_BROKER_URL = _os.environ.get('REDIS_URL', 'redis://localhost:6379/0')
     CELERY_RESULT_BACKEND = _os.environ.get('REDIS_URL', 'redis://localhost:6379/0')
     CORS_ALLOW_ALL_ORIGINS = True
+    STATIC_ROOT = _os.path.join(BASE_DIR, 'staticfiles')
+    STATIC_URL = '/static/'

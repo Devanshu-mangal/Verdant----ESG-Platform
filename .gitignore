@@ -1,0 +1,24 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.env
+venv/
+*.egg-info/
+dist/
+build/
+.pytest_cache/
+
+# Django
+backend/db.sqlite3
+backend/staticfiles/
+*.log
+
+# Node
+frontend/node_modules/
+frontend/.next/
+frontend/.env.local
+
+# OS
+.DS_Store
+*.swp

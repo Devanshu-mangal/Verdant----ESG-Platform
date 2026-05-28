@@ -1,0 +1,21 @@
+expense_report_id,traveler_id,travel_type,travel_date,origin_iata,destination_iata,cabin_class,distance_km,hotel_name,city,nights
+EXP-2024-0041,EMP-1021,flight,2024-01-15,BLR,DEL,economy,,,,
+EXP-2024-0041,EMP-1021,hotel,2024-01-15,,,,,Taj Mahal Hotel,New Delhi,2
+EXP-2024-0041,EMP-1021,flight,2024-01-17,DEL,BLR,economy,,,,
+EXP-2024-0052,EMP-1034,flight,2024-01-22,BOM,LHR,business,,,,
+EXP-2024-0052,EMP-1034,hotel,2024-01-22,,,,,The Savoy,London,3
+EXP-2024-0052,EMP-1034,flight,2024-01-25,LHR,BOM,business,,,,
+EXP-2024-0063,EMP-1008,flight,2024-02-05,BLR,SIN,economy,,,,
+EXP-2024-0063,EMP-1008,hotel,2024-02-05,,,,,Marina Bay Sands,Singapore,2
+EXP-2024-0063,EMP-1008,flight,2024-02-07,SIN,BLR,economy,,,,
+EXP-2024-0071,EMP-1055,taxi,2024-02-10,,,,18,,,
+EXP-2024-0072,EMP-1021,flight,2024-02-18,BLR,DEL,economy,,,,
+EXP-2024-0072,EMP-1021,flight,2024-02-20,DEL,BLR,economy,,,,
+EXP-2024-0083,EMP-1089,flight,2024-03-04,BOM,JFK,business,,,,
+EXP-2024-0083,EMP-1089,hotel,2024-03-04,,,,,Marriott Times Square,New York,4
+EXP-2024-0083,EMP-1089,flight,2024-03-08,JFK,BOM,business,,,,
+EXP-2024-0091,EMP-1034,flight,2024-03-15,LHR,SIN,business,,,,
+EXP-2024-0091,EMP-1034,flight,2024-03-18,SIN,BLR,economy,,,,
+EXP-2024-0095,EMP-1102,train,2024-03-20,,,,45,,,
+EXP-2024-0098,EMP-1055,flight,2024-04-02,BLR,DXB,economy,,,,
+EXP-2024-0098,EMP-1055,hotel,2024-04-02,,,,,Atlantis The Palm,Dubai,2

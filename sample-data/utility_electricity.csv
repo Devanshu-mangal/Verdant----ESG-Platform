@@ -1,0 +1,15 @@
+meter_id,site_name,billing_period_start,billing_period_end,consumption_kwh,demand_kw,tariff,is_estimated
+MTR-BLR-001,Bangalore HQ,2024-01-04,2024-02-03,48250,320,HT-1,false
+MTR-BLR-001,Bangalore HQ,2024-02-04,2024-03-04,51300,340,HT-1,false
+MTR-BLR-001,Bangalore HQ,2024-03-05,2024-04-03,49800,335,HT-1,false
+MTR-BLR-001,Bangalore HQ,2024-04-04,2024-05-04,52100,348,HT-1,false
+MTR-BLR-001,Bangalore HQ,2024-05-05,2024-06-03,196400,390,HT-1,false
+MTR-BLR-001,Bangalore HQ,2024-06-04,2024-07-04,54200,355,HT-1,true
+MTR-BLR-002,Bangalore Warehouse,2024-01-04,2024-02-03,18400,140,LT-2,false
+MTR-BLR-002,Bangalore Warehouse,2024-02-04,2024-03-04,17900,138,LT-2,false
+MTR-BLR-002,Bangalore Warehouse,2024-03-05,2024-04-03,19200,145,LT-2,false
+MTR-BLR-002,Bangalore Warehouse,2024-04-04,2024-05-04,18700,142,LT-2,false
+MTR-MUM-001,Mumbai Office,2024-01-08,2024-02-07,31500,210,HT-2,false
+MTR-MUM-001,Mumbai Office,2024-02-08,2024-03-09,29800,205,HT-2,false
+MTR-MUM-001,Mumbai Office,2024-03-10,2024-04-08,32100,215,HT-2,false
+MTR-MUM-001,Mumbai Office,2024-04-09,2024-05-08,33400,220,HT-2,false

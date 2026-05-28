@@ -1,3 +1,4 @@
+import os
 from rest_framework import viewsets, status
 from rest_framework.decorators import action, api_view
 from rest_framework.response import Response
@@ -63,11 +64,10 @@ class UploadBatchViewSet(viewsets.ReadOnlyModelViewSet):
             summary={'raw_content': raw_content},
         )
 
-        import os
-	if os.environ.get('RENDER'):
-    		process_upload_batch(str(batch.id))
-	else:
-    		process_upload_batch.delay(str(batch.id))
+        if os.environ.get('RENDER'):
+            process_upload_batch(str(batch.id))
+        else:
+            process_upload_batch.delay(str(batch.id))
 
         return Response(
             UploadBatchSerializer(batch).data,
@@ -110,18 +110,12 @@ class NormalizedActivityViewSet(viewsets.ModelViewSet):
         if activity.status == NormalizedActivity.ReviewStatus.LOCKED:
             return Response({'error': 'Record is locked'}, status=status.HTTP_400_BAD_REQUEST)
         actor = request.data.get('actor', 'analyst@breatheesg.com')
-        tenant = activity.tenant
-        meta = {
-            'activity_id': str(activity.id),
-            'scope': activity.scope,
-            'category': activity.category,
-        }
         AuditLog.objects.create(
-            tenant=tenant,
+            tenant=activity.tenant,
             actor=actor,
             event='row.deleted',
             description=f'Record deleted by {actor}',
-            metadata=meta,
+            metadata={'activity_id': str(activity.id), 'scope': activity.scope, 'category': activity.category},
         )
         activity.raw_record.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
@@ -133,13 +127,11 @@ class NormalizedActivityViewSet(viewsets.ModelViewSet):
             return Response({'error': 'Record is locked'}, status=status.HTTP_400_BAD_REQUEST)
         activity.status = NormalizedActivity.ReviewStatus.FLAGGED
         activity.save(update_fields=['status'])
-        actor = request.data.get('actor', 'analyst@breatheesg.com')
         AuditLog.objects.create(
-            tenant=activity.tenant,
-            activity=activity,
-            actor=actor,
+            tenant=activity.tenant, activity=activity,
+            actor=request.data.get('actor', 'analyst@breatheesg.com'),
             event='row.flagged',
-            description=f'Manually flagged by {actor}',
+            description=f"Manually flagged by {request.data.get('actor', 'analyst')}",
             metadata={},
         )
         return Response({'status': 'flagged'})
@@ -237,7 +229,6 @@ def analytics(request):
     tenant_id = request.query_params.get('tenant')
     qs = NormalizedActivity.objects.filter(tenant_id=tenant_id) if tenant_id else NormalizedActivity.objects.all()
 
-    # CO2e by scope
     scope_data = {}
     for scope in ['SCOPE_1', 'SCOPE_2', 'SCOPE_3']:
         agg = qs.filter(scope=scope).aggregate(
@@ -251,7 +242,6 @@ def analytics(request):
             'avg_confidence': round(agg['avg_confidence'] or 0, 3),
         }
 
-    # Monthly trend
     monthly = (
         qs.filter(period_start__isnull=False)
         .annotate(month=TruncMonth('period_start'))
@@ -267,14 +257,12 @@ def analytics(request):
         trend[m][row['scope']] = round(row['co2'] or 0, 2)
     trend_list = sorted(trend.values(), key=lambda x: x['month'])
 
-    # Top emission categories
     top_categories = list(
         qs.values('category', 'scope')
         .annotate(total=Sum('co2e_kg'), count=Count('id'))
         .order_by('-total')[:8]
     )
 
-    # Source health
     batches = UploadBatch.objects.select_related('source')
     if tenant_id:
         batches = batches.filter(source__tenant_id=tenant_id)
@@ -315,15 +303,14 @@ def analytics(request):
             'fail_rate':      round(fail_rate, 3),
         })
 
-    # Normalization insights
-    total       = qs.count()
-    flagged     = qs.filter(status__in=['FLAGGED', 'REVIEW_REQUIRED']).count()
-    approved    = qs.filter(status='APPROVED').count()
-    low_conf    = qs.filter(confidence_score__lt=0.85).count()
-    conversions = qs.exclude(original_unit=F('activity_unit')).count()
-    inferred    = ValidationIssue.objects.filter(activity__in=qs, issue_type='INFERRED_DISTANCE').count()
-    duplicates  = ValidationIssue.objects.filter(activity__in=qs, issue_type='DUPLICATE').count()
-    negative    = ValidationIssue.objects.filter(activity__in=qs, issue_type='NEGATIVE_VALUE').count()
+    total        = qs.count()
+    flagged      = qs.filter(status__in=['FLAGGED', 'REVIEW_REQUIRED']).count()
+    approved     = qs.filter(status='APPROVED').count()
+    low_conf     = qs.filter(confidence_score__lt=0.85).count()
+    conversions  = qs.exclude(original_unit=F('activity_unit')).count()
+    inferred     = ValidationIssue.objects.filter(activity__in=qs, issue_type='INFERRED_DISTANCE').count()
+    duplicates   = ValidationIssue.objects.filter(activity__in=qs, issue_type='DUPLICATE').count()
+    negative     = ValidationIssue.objects.filter(activity__in=qs, issue_type='NEGATIVE_VALUE').count()
     avg_conf_all = qs.aggregate(a=Avg('confidence_score'))['a'] or 0
 
     insights = {
